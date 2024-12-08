@@ -1,18 +1,13 @@
 function checkForName(inputText) {
     console.log("::: Running checkForName :::", inputText);
-    let names = [
-        "Picard",
-        "Janeway",
-        "Kirk",
-        "Archer",
-        "Georgiou"
-    ];
 
-    if(names.includes(inputText)) {
-        alert("Welcome, Captain!");
-    }
-    else {
-        alert("Enter a valid captain name");
+
+    const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[a-z]{2,}(\/[\w-./?%&=]*)?$/i;
+
+    if (urlRegex.test(inputText)) {
+        console.log("Valid URL provided:", inputText);
+    } else {
+        alert("Please enter a valid URL!");
     }
 }
 

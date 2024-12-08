@@ -1,30 +1,55 @@
-// Replace checkForName with a function that checks the URL
-import { checkForName } from './nameChecker'
+import { checkForName } from './nameChecker.js';
 
-// If working on Udacity workspace, update this with the Server API URL e.g. `https://wfkdhyvtzx.prod.udacity-student-workspaces.com/api`
-// const serverURL = 'https://wfkdhyvtzx.prod.udacity-student-workspaces.com/api'
-const serverURL = 'https://localhost:8000/api'
+function initFormHandler() {
+    const form = document.getElementById('urlForm');
+    if (form) {
+        form.addEventListener('submit', handleSubmit);
+    }
+}
 
-const form = document.getElementById('urlForm');
-form.addEventListener('submit', handleSubmit);
 
 function handleSubmit(event) {
     event.preventDefault();
 
-    // Get the URL from the input field
     const formText = document.getElementById('name').value;
 
-    // This is an example code that checks the submitted name. You may remove it from your code
-    checkForName(formText);
-    
-    // Check if the URL is valid
- 
-        // If the URL is valid, send it to the server using the serverURL constant above
-      
+
+    if (!formText) {
+        alert("Please enter text or a URL!");
+        return;
+    }
+
+
+    if (!isValidURL(formText)) {
+        alert("Please enter a valid URL!");
+        return;
+    }
+
+
+    fetch('http://localhost:8000/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: formText }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+
+            const resultsElement = document.getElementById('results');
+            resultsElement.innerHTML = `
+                <p><strong>Polarity:</strong> ${data.score_tag}</p>
+                <p><strong>Subjectivity:</strong> ${data.subjectivity}</p>
+                <p><strong>Text:</strong> ${formText}</p>
+            `;
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('An error occurred.');
+        });
 }
 
-// Function to send data to the server
+function isValidURL(inputText) {
+    const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[a-z]{2,}(\/[\w-./?%&=]*)?$/i;
+    return urlRegex.test(inputText);
+}
 
-// Export the handleSubmit function
-export { handleSubmit };
-
+export { handleSubmit, isValidURL, initFormHandler };
